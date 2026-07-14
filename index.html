@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portofolio Pink · Emoji Scroll</title>
-  <!-- Font & ikon (optional) -->
+  <title>Portofolio Pink · Suci Siti Prabowo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -17,13 +16,12 @@
 
     body {
       font-family: 'Quicksand', sans-serif;
-      background: #fce4ec; /* soft pink background */
+      background: #fce4ec;
       color: #4a2c3a;
       min-height: 100vh;
       scroll-behavior: smooth;
     }
 
-    /* container utama */
     .container {
       max-width: 1000px;
       margin: 0 auto;
@@ -31,7 +29,6 @@
       position: relative;
     }
 
-    /* CARD profil — elemen pink transparan dengan aksen */
     .profile-card {
       background: rgba(255, 255, 255, 0.6);
       backdrop-filter: blur(4px);
@@ -71,10 +68,6 @@
       height: 100%;
       object-fit: cover;
       display: block;
-    }
-
-    .profile-title {
-      flex: 1;
     }
 
     .profile-title h1 {
@@ -131,7 +124,6 @@
       color: #880e4f;
     }
 
-    /* bagian sekolah & deskripsi */
     .bio-section {
       margin-top: 1.8rem;
       display: flex;
@@ -158,7 +150,6 @@
       font-size: 1.3rem;
     }
 
-    /* emoji float saat scroll — container */
     #emoji-zone {
       position: fixed;
       top: 0;
@@ -192,7 +183,6 @@
       }
     }
 
-    /* footer / extra */
     .footer-note {
       margin-top: 3rem;
       text-align: center;
@@ -220,7 +210,6 @@
       100% { transform: scale(1.2); }
     }
 
-    /* responsive */
     @media (max-width: 640px) {
       .profile-header {
         flex-direction: column;
@@ -252,7 +241,6 @@
       }
     }
 
-    /* sedikit hiasan pink */
     .pink-blur-bg {
       position: fixed;
       top: -10%;
@@ -281,52 +269,46 @@
   </style>
 </head>
 <body>
-  <!-- background blur pink -->
   <div class="pink-blur-bg"></div>
   <div class="pink-blur-bg-left"></div>
 
-  <!-- zona emoji yang melayang -->
   <div id="emoji-zone"></div>
 
   <div class="container">
-    <!-- CARD UTAMA -->
     <div class="profile-card">
       <div class="profile-header">
         <div class="profile-photo">
-          <!-- foto dari link yang diberikan -->
-          <img src="https://files.catbox.moe/5pzd1k.jpg" alt="Foto Profil">
+          <img src="https://files.catbox.moe/5pzd1k.jpg" alt="Foto Suci Siti Prabowo">
         </div>
         <div class="profile-title">
-          <h1>🌷 Alya Putri</h1>
+          <h1>🌷 Suci Siti Prabowo</h1>
           <div class="subhead">✨ mahasiswa · kreatif · penuh cinta</div>
         </div>
       </div>
 
-      <!-- grid info: nama, tanggal lahir, dll -->
       <div class="info-grid">
         <div class="info-item">
           <span>📛</span>
           <span class="label">Nama</span>
-          <span class="value">Alya Putri Zahra</span>
+          <span class="value">Suci Siti Prabowo</span>
         </div>
         <div class="info-item">
           <span>🎂</span>
           <span class="label">Tanggal Lahir</span>
-          <span class="value">15 Maret 2002</span>
+          <span class="value">1 Januari 2007</span>
         </div>
         <div class="info-item">
           <span>🏫</span>
           <span class="label">Sekolah</span>
-          <span class="value">Univ. Bina Nusantara</span>
+          <span class="value">The American School in London (ASL)</span>
         </div>
         <div class="info-item">
           <span>📍</span>
           <span class="label">Kota</span>
-          <span class="value">Bandung, ID</span>
+          <span class="value">Jakarta, ID</span>
         </div>
       </div>
 
-      <!-- detail tambahan : sekolah, jurusan, hobi (dengan emoji) -->
       <div class="bio-section">
         <div class="bio-item">
           <span class="emoji-badge">📚</span>
@@ -343,17 +325,15 @@
       </div>
     </div>
 
-    <!-- informasi tambahan (sekolah & lainnya) -->
     <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; justify-content: center; margin: 2rem 0 1rem;">
       <div style="background: rgba(255,255,255,0.4); backdrop-filter: blur(3px); padding: 0.6rem 1.8rem; border-radius: 60px; border: 1px solid #f8bbd0;">
-        <span style="font-weight: 300;">🎓 SMA</span> <strong>SMAN 3 Bandung</strong> (2017-2020)
+        <span style="font-weight: 300;">🎓 SMA</span> <strong>ASL London</strong> (2021-2024)
       </div>
       <div style="background: rgba(255,255,255,0.4); backdrop-filter: blur(3px); padding: 0.6rem 1.8rem; border-radius: 60px; border: 1px solid #f8bbd0;">
-        <span style="font-weight: 300;">📅</span> <strong>Angkatan 2020</strong> · aktif di himpunan
+        <span style="font-weight: 300;">📅</span> <strong>Angkatan 2024</strong> · aktif di klub seni
       </div>
     </div>
 
-    <!-- pesan interaktif / deskripsi lebih -->
     <div style="background: rgba(255,255,255,0.25); backdrop-filter: blur(3px); padding: 1.2rem 2rem; border-radius: 40px; margin: 1.8rem 0; text-align: center; border: 1px solid #f8bbd0;">
       <p style="font-size: 1.1rem; font-weight: 400;">
         <span style="font-size: 1.8rem;">🌸</span> 
@@ -362,7 +342,6 @@
       </p>
     </div>
 
-    <!-- footer dengan emoji berdenyut -->
     <div style="text-align: center;">
       <div class="footer-note">
         <span>✨</span> scroll untuk melihat emoji melayang <span>✨</span>
@@ -370,10 +349,8 @@
     </div>
   </div>
 
-  <!-- JavaScript: emoji muncul saat scroll -->
   <script>
     (function() {
-      // daftar emoji yang akan muncul (bisa ditambah)
       const emojiList = [
         '🌸', '🌷', '🌹', '🌺', '🌻', '🌼', '🌸', '🌸', 
         '💖', '💗', '💕', '💓', '💘', '💝', 
@@ -382,42 +359,32 @@
         '💫', '🌙', '☁️', '🌊', '🌸', '🌷', '🌺'
       ];
 
-      // ambil zone
       const zone = document.getElementById('emoji-zone');
 
-      // fungsi untuk menambah emoji di posisi acak
       function spawnEmoji() {
         if (!zone) return;
 
-        // pilih emoji random
         const randomIndex = Math.floor(Math.random() * emojiList.length);
         const emoji = emojiList[randomIndex];
 
-        // buat elemen
         const el = document.createElement('div');
         el.className = 'emoji-float';
         el.textContent = emoji;
 
-        // ukuran bervariasi
-        const size = 1.8 + Math.random() * 2.2; // 1.8rem - 4rem
+        const size = 1.8 + Math.random() * 2.2;
         el.style.fontSize = size + 'rem';
 
-        // posisi horizontal acak (0% - 90%)
-        const leftPos = 2 + Math.random() * 88; 
+        const leftPos = 2 + Math.random() * 88;
         el.style.left = leftPos + '%';
 
-        // posisi bottom awal (dari bawah layar)
-        const startBottom = -10 + Math.random() * 20; // -10% ~ 10%
+        const startBottom = -10 + Math.random() * 20;
         el.style.bottom = startBottom + '%';
 
-        // durasi animasi bervariasi
-        const duration = 3.2 + Math.random() * 2.5; // 3.2s ~ 5.7s
+        const duration = 3.2 + Math.random() * 2.5;
         el.style.animationDuration = duration + 's';
 
-        // tambahkan ke zone
         zone.appendChild(el);
 
-        // hapus setelah animasi selesai (agar tidak overload)
         setTimeout(() => {
           if (el.parentNode) {
             el.parentNode.removeChild(el);
@@ -425,10 +392,9 @@
         }, duration * 1000 + 200);
       }
 
-      // throttle untuk scroll: batasi frekuensi spawn
       let scrollTimeout = false;
       let lastSpawnTime = 0;
-      const minInterval = 50; // minimal 50ms antar spawn
+      const minInterval = 50;
 
       function handleScroll() {
         if (scrollTimeout) return;
@@ -440,23 +406,19 @@
           return;
         }
 
-        // spawn 1-3 emoji per scroll (tergantung kecepatan)
-        const count = 1 + Math.floor(Math.random() * 3); // 1 ~ 3
+        const count = 1 + Math.floor(Math.random() * 3);
         for (let i = 0; i < count; i++) {
           spawnEmoji();
         }
         lastSpawnTime = now;
 
-        // reset throttle setelah 30ms
         setTimeout(() => {
           scrollTimeout = false;
         }, 30);
       }
 
-      // pasang event listener scroll dengan passive
       window.addEventListener('scroll', handleScroll, { passive: true });
 
-      // spawn beberapa emoji awal saat load (biar langsung ada)
       window.addEventListener('load', function() {
         for (let i = 0; i < 8; i++) {
           setTimeout(() => {
@@ -465,24 +427,17 @@
         }
       });
 
-      // tambahkan juga saat resize (opsional)
       window.addEventListener('resize', function() {
-        // spawn 1 emoji saat resize agar tetap hidup
         if (Math.random() > 0.6) {
           spawnEmoji();
         }
       }, { passive: true });
 
-      // (optional) spawn setiap 3 detik jika user tidak scroll? 
-      // biar tetap ada gerakan, tapi tidak terlalu sering
       setInterval(() => {
-        // hanya spawn jika tidak ada aktivitas scroll? 
-        // tetap spawn 1 saja agar suasana hidup
         if (Math.random() > 0.3) {
           spawnEmoji();
         }
       }, 2800);
-
     })();
   </script>
 </body>
