@@ -1,96 +1,79 @@
--- =============================================
--- 🐟 FISH & MONSTERS - SCRIPT LENGKAP 🐟
--- Dibuat oleh : XyzeDev
--- Discord : https://discord.gg/xyzedev
--- Support : SEMUA Executor & SEMUA Device
--- =============================================
+-- FISH AND MONSTERS SCRIPT
+-- BY XyzeDev
+-- DISCORD: https://discord.gg/xyzedev
 
--- CEK DEVICE (HP atau PC)
-local isMobile = game:GetService("UserInputService").TouchEnabled
-
--- VARIABEL GLOBAL
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
 local rootPart = character:WaitForChild("HumanoidRootPart")
+local isMobile = game:GetService("UserInputService").TouchEnabled
 
--- FUNGSI NOTIF (Universal)
 local function notify(text)
     pcall(function()
         game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "🐟 XyzeDev Script",
+            Title = "XyzeDev Script",
             Text = tostring(text),
             Duration = 3
         })
     end)
 end
 
--- FUNGSI FIND REMOTE (Otomatis cari remote yang benar)
-local function findRemote(remoteName)
-    local remoteEvents = game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvents")
-    if remoteEvents then
-        local found = remoteEvents:FindFirstChild(remoteName)
+local function findRemote(name)
+    local events = game:GetService("ReplicatedStorage"):FindFirstChild("RemoteEvents")
+    if events then
+        local found = events:FindFirstChild(name)
         if found then return found end
     end
-    
-    -- Cari di semua tempat jika tidak ditemukan
-    for _, service in pairs(game:GetChildren()) do
-        local found = service:FindFirstChild(remoteName)
-        if found then return found end
-    end
-    
-    for _, service in pairs(game:GetService("ReplicatedStorage"):GetChildren()) do
-        if service:IsA("RemoteEvent") and service.Name:lower():find(remoteName:lower()) then
-            return service
+    for _, obj in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+        if obj:IsA("RemoteEvent") and obj.Name:lower():find(name:lower()) then
+            return obj
         end
     end
-    
     return nil
 end
 
--- =============================================
--- 🎣 FITUR MEMANCING DASAR
--- =============================================
-
--- 1. AUTO FARM MANCING
+-- VARIABLES
 local autoFarm = false
-local function toggleAutoFarm()
+local autoReel = false
+local autoBait = false
+local autoSell = false
+local autoUpgrade = false
+local autoDrop = false
+local fishRadar = false
+local speedHack = false
+local jumpHack = false
+
+-- AUTO FARM
+local function toggleFarm()
     autoFarm = not autoFarm
-    notify("🎣 Auto Farm: " .. (autoFarm and "AKTIF" or "MATI"))
-    
+    notify("Auto Farm: " .. (autoFarm and "ON" or "OFF"))
     if autoFarm then
         spawn(function()
-            while autoFarm and game:IsLoaded() do
+            while autoFarm do
                 pcall(function()
-                    local cast = findRemote("CastRod") or findRemote("Cast") or findRemote("Fish")
-                    local reel = findRemote("ReelIn") or findRemote("Reel") or findRemote("ReelInFish")
-                    
+                    local cast = findRemote("CastRod") or findRemote("Cast")
+                    local reel = findRemote("ReelIn") or findRemote("Reel")
                     if cast then cast:FireServer() end
                     wait(2)
                     if reel then reel:FireServer() end
                     wait(3)
                 end)
-                game:GetService("RunService").Heartbeat:Wait()
+                wait()
             end
         end)
     end
 end
 
--- 2. AUTO REEL (Otomatis menggulung saat ikan menggigit)
-local autoReel = false
-local function toggleAutoReel()
+-- AUTO REEL
+local function toggleReel()
     autoReel = not autoReel
-    notify("🔄 Auto Reel: " .. (autoReel and "AKTIF" or "MATI"))
-    
+    notify("Auto Reel: " .. (autoReel and "ON" or "OFF"))
     if autoReel then
         spawn(function()
-            while autoReel and game:IsLoaded() do
+            while autoReel do
                 pcall(function()
-                    local reelRemote = findRemote("ReelIn") or findRemote("Reel") or findRemote("CatchFish")
-                    if reelRemote then
-                        reelRemote:FireServer()
-                        wait(0.5)
-                    end
+                    local reel = findRemote("ReelIn") or findRemote("Reel")
+                    if reel then reel:FireServer() end
                 end)
                 wait(2)
             end
@@ -98,25 +81,20 @@ local function toggleAutoReel()
     end
 end
 
--- 3. AUTO BAIT (Pasang umpan otomatis)
-local autoBait = false
-local function toggleAutoBait()
+-- AUTO BAIT
+local function toggleBait()
     autoBait = not autoBait
-    notify("🎣 Auto Bait: " .. (autoBait and "AKTIF" or "MATI"))
-    
+    notify("Auto Bait: " .. (autoBait and "ON" or "OFF"))
     if autoBait then
         spawn(function()
-            while autoBait and game:IsLoaded() do
+            while autoBait do
                 pcall(function()
-                    local backpack = player:FindFirstChild("Backpack")
-                    if backpack then
-                        for _, item in pairs(backpack:GetChildren()) do
+                    local bp = player:FindFirstChild("Backpack")
+                    if bp then
+                        for _, item in pairs(bp:GetChildren()) do
                             if item:IsA("Tool") and (item.Name:lower():find("bait") or item.Name:lower():find("worm")) then
-                                local baitRemote = findRemote("UseBait") or findRemote("EquipBait") or findRemote("Bait")
-                                if baitRemote then
-                                    baitRemote:FireServer(item.Name)
-                                    wait(0.5)
-                                end
+                                local bait = findRemote("UseBait") or findRemote("Bait")
+                                if bait then bait:FireServer(item.Name) end
                             end
                         end
                     end
@@ -127,21 +105,16 @@ local function toggleAutoBait()
     end
 end
 
--- 4. AUTO SELL IKAN (Jual ikan otomatis)
-local autoSell = false
-local function toggleAutoSell()
+-- AUTO SELL
+local function toggleSell()
     autoSell = not autoSell
-    notify("💰 Auto Sell Ikan: " .. (autoSell and "AKTIF" or "MATI"))
-    
+    notify("Auto Sell: " .. (autoSell and "ON" or "OFF"))
     if autoSell then
         spawn(function()
-            while autoSell and game:IsLoaded() do
+            while autoSell do
                 pcall(function()
-                    local sellRemote = findRemote("SellFish") or findRemote("Sell") or findRemote("SellAll")
-                    if sellRemote then
-                        sellRemote:FireServer()
-                        wait(1)
-                    end
+                    local sell = findRemote("SellFish") or findRemote("Sell")
+                    if sell then sell:FireServer() end
                 end)
                 wait(3)
             end
@@ -149,21 +122,16 @@ local function toggleAutoSell()
     end
 end
 
--- 5. AUTO UPGRADE ROD (Upgrade joran otomatis)
-local autoUpgrade = false
-local function toggleAutoUpgrade()
+-- AUTO UPGRADE
+local function toggleUpgrade()
     autoUpgrade = not autoUpgrade
-    notify("🔧 Auto Upgrade Rod: " .. (autoUpgrade and "AKTIF" or "MATI"))
-    
+    notify("Auto Upgrade: " .. (autoUpgrade and "ON" or "OFF"))
     if autoUpgrade then
         spawn(function()
-            while autoUpgrade and game:IsLoaded() do
+            while autoUpgrade do
                 pcall(function()
-                    local upgradeRemote = findRemote("UpgradeRod") or findRemote("EnhanceRod") or findRemote("LevelUp")
-                    if upgradeRemote then
-                        upgradeRemote:FireServer()
-                        wait(2)
-                    end
+                    local up = findRemote("UpgradeRod") or findRemote("LevelUp")
+                    if up then up:FireServer() end
                 end)
                 wait(5)
             end
@@ -171,23 +139,20 @@ local function toggleAutoUpgrade()
     end
 end
 
--- 6. AUTO DROP (Buang ikan yang tidak diinginkan)
-local autoDrop = false
-local function toggleAutoDrop()
+-- AUTO DROP
+local function toggleDrop()
     autoDrop = not autoDrop
-    notify("🗑️ Auto Drop Ikan: " .. (autoDrop and "AKTIF" or "MATI"))
-    
+    notify("Auto Drop: " .. (autoDrop and "ON" or "OFF"))
     if autoDrop then
         spawn(function()
-            while autoDrop and game:IsLoaded() do
+            while autoDrop do
                 pcall(function()
-                    local backpack = player:FindFirstChild("Backpack")
-                    if backpack then
-                        for _, item in pairs(backpack:GetChildren()) do
+                    local bp = player:FindFirstChild("Backpack")
+                    if bp then
+                        for _, item in pairs(bp:GetChildren()) do
                             if item:IsA("Tool") and item.Name:lower():find("fish") then
                                 if item.Name:lower():find("common") or item.Name:lower():find("small") then
                                     item.Parent = workspace
-                                    wait(0.3)
                                 end
                             end
                         end
@@ -199,103 +164,84 @@ local function toggleAutoDrop()
     end
 end
 
--- 7. FISH FINDER (Cari spot ikan terbaik)
+-- FISH FINDER
 local function fishFinder()
-    notify("🔍 Mencari spot ikan terbaik...")
+    notify("Finding best fishing spot...")
     pcall(function()
-        local bestSpot = nil
-        local mostFish = 0
-        
+        local best = nil
+        local count = 0
         for _, obj in pairs(workspace:GetDescendants()) do
-            if obj:IsA("Part") and (obj.Name:lower():find("fish") or obj.Name:lower():find("spawn") or obj.Name:lower():find("water")) then
-                local fishCount = 0
+            if obj:IsA("Part") and (obj.Name:lower():find("fish") or obj.Name:lower():find("water")) then
+                local c = 0
                 for _, child in pairs(obj:GetChildren()) do
-                    if child.Name:lower():find("fish") then
-                        fishCount = fishCount + 1
-                    end
+                    if child.Name:lower():find("fish") then c = c + 1 end
                 end
-                
-                if fishCount > mostFish then
-                    mostFish = fishCount
-                    bestSpot = obj
+                if c > count then
+                    count = c
+                    best = obj
                 end
             end
         end
-        
-        if bestSpot then
-            rootPart.CFrame = bestSpot.CFrame * CFrame.new(0, 2, 5)
-            notify("✅ Spot ikan ditemukan! (" .. mostFish .. " ikan)")
+        if best then
+            rootPart.CFrame = best.CFrame * CFrame.new(0, 2, 5)
+            notify("Spot found! (" .. count .. " fish)")
         else
-            notify("❌ Tidak ada spot ikan ditemukan!")
+            notify("No fishing spot found!")
         end
     end)
 end
 
--- 8. MEGA CATCH (Tangkap ikan besar otomatis)
+-- MEGA CATCH
 local function megaCatch()
-    notify("🐋 Mencari ikan besar...")
+    notify("Trying to catch legendary fish...")
     pcall(function()
-        local megaRemote = findRemote("MegaCatch") or findRemote("BossFish") or findRemote("Legendary")
-        if megaRemote then
-            megaRemote:FireServer()
-            notify("✅ Memancing ikan legendaris!")
+        local mega = findRemote("MegaCatch") or findRemote("BossFish")
+        if mega then
+            mega:FireServer()
+            notify("Legendary fishing activated!")
         else
-            notify("❌ Fitur Mega Catch tidak ditemukan!")
+            notify("Mega Catch not found!")
         end
     end)
 end
 
--- 9. FISH STATS (Lihat statistik ikan)
+-- FISH STATS
 local function fishStats()
     pcall(function()
         local stats = {}
-        local inventory = player:FindFirstChild("Inventory") or player:FindFirstChild("Backpack")
-        
-        if inventory then
-            for _, item in pairs(inventory:GetChildren()) do
+        local inv = player:FindFirstChild("Backpack")
+        if inv then
+            for _, item in pairs(inv:GetChildren()) do
                 if item:IsA("Tool") and item.Name:lower():find("fish") then
-                    local name = item.Name
-                    stats[name] = (stats[name] or 0) + 1
+                    stats[item.Name] = (stats[item.Name] or 0) + 1
                 end
             end
         end
-        
-        local message = "📊 Statistik Ikan:\n"
+        local msg = "Fish Stats:\n"
         for name, count in pairs(stats) do
-            message = message .. name .. ": " .. count .. " ekor\n"
+            msg = msg .. name .. ": " .. count .. "\n"
         end
-        
-        if next(stats) == nil then
-            message = "📊 Belum ada ikan yang ditangkap!"
-        end
-        
-        notify(message)
+        if next(stats) == nil then msg = "No fish caught yet!" end
+        notify(msg)
     end)
 end
 
--- 10. FISH RADAR (Deteksi ikan di sekitar)
-local fishRadar = false
-local function toggleFishRadar()
+-- FISH RADAR
+local function toggleRadar()
     fishRadar = not fishRadar
-    notify("📡 Fish Radar: " .. (fishRadar and "AKTIF" or "MATI"))
-    
+    notify("Fish Radar: " .. (fishRadar and "ON" or "OFF"))
     if fishRadar then
         spawn(function()
-            while fishRadar and game:IsLoaded() do
+            while fishRadar do
                 pcall(function()
-                    local fishCount = 0
+                    local c = 0
                     for _, obj in pairs(workspace:GetDescendants()) do
                         if obj.Name:lower():find("fish") and obj:IsA("Model") and obj.PrimaryPart then
-                            local distance = (obj.PrimaryPart.Position - rootPart.Position).Magnitude
-                            if distance < 100 then
-                                fishCount = fishCount + 1
-                            end
+                            local dist = (obj.PrimaryPart.Position - rootPart.Position).Magnitude
+                            if dist < 100 then c = c + 1 end
                         end
                     end
-                    
-                    if fishCount > 0 then
-                        notify("🐟 " .. fishCount .. " ikan terdeteksi di sekitar!")
-                    end
+                    if c > 0 then notify(c .. " fish detected nearby!") end
                 end)
                 wait(5)
             end
@@ -303,278 +249,91 @@ local function toggleFishRadar()
     end
 end
 
--- 11. AUTO ALL (Aktifkan semua fitur memancing)
-local function autoFishAll()
-    toggleAutoFarm()
+-- AUTO ALL
+local function autoAll()
+    toggleFarm()
     wait(1)
-    toggleAutoReel()
+    toggleReel()
     wait(1)
-    toggleAutoBait()
+    toggleBait()
     wait(1)
-    toggleAutoSell()
+    toggleSell()
     wait(1)
-    toggleAutoUpgrade()
+    toggleUpgrade()
     wait(1)
-    toggleAutoDrop()
-    wait(1)
-    toggleFishRadar()
-    notify("✅ Semua fitur memancing diaktifkan!")
+    toggleDrop()
+    notify("All fishing features activated!")
 end
 
--- =============================================
--- 🛒 FITUR SHOP & TELEPORT
--- =============================================
-
--- AUTO BUY ROD
-local function autoBuyRod()
-    notify("🔄 Membeli semua rod...")
+-- BUY ROD
+local function buyRod()
+    notify("Buying rods...")
     pcall(function()
-        local buyRemote = findRemote("BuyRod") or findRemote("PurchaseRod") or findRemote("Buy")
-        if buyRemote then
-            for i = 1, 20 do
-                buyRemote:FireServer(i)
+        local buy = findRemote("BuyRod") or findRemote("Buy")
+        if buy then
+            for i = 1, 10 do
+                buy:FireServer(i)
                 wait(0.2)
             end
-            notify("✅ Berhasil membeli rod!")
-        else
-            for _, obj in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
-                if obj:IsA("RemoteEvent") and (obj.Name:lower():find("buy") or obj.Name:lower():find("purchase")) then
-                    obj:FireServer(1)
-                    wait(0.2)
-                end
-            end
-            notify("✅ Selesai mencoba membeli rod!")
+            notify("Rods purchased!")
         end
     end)
 end
 
--- TELEPORT SPAWN
-local function teleportSpawn()
+-- TELEPORT
+local function teleport()
     pcall(function()
         local spawns = workspace:FindFirstChild("Spawns") or workspace:FindFirstChild("SpawnLocation")
         if spawns then
-            local spawnPoint = spawns:GetChildren()[1] or spawns
-            if spawnPoint then
-                rootPart.CFrame = spawnPoint.CFrame * CFrame.new(0, 3, 0)
-                notify("📍 Teleport ke Spawn!")
-                return
-            end
+            local point = spawns:GetChildren()[1] or spawns
+            rootPart.CFrame = point.CFrame * CFrame.new(0, 3, 0)
+            notify("Teleported to spawn!")
         end
-        
-        for _, obj in pairs(workspace:GetChildren()) do
-            if obj:IsA("SpawnLocation") then
-                rootPart.CFrame = obj.CFrame * CFrame.new(0, 3, 0)
-                notify("📍 Teleport ke Spawn!")
-                return
-            end
-        end
-        notify("❌ Spawn tidak ditemukan!")
     end)
 end
 
 -- SPEED BOAT
-local function speedBoat()
+local function boatSpeed()
     pcall(function()
-        local boat = nil
         for _, obj in pairs(workspace:GetDescendants()) do
-            if obj:IsA("VehicleSeat") and (obj.Parent:FindFirstChild("Boat") or obj.Name:lower():find("boat")) then
-                local distance = (obj.Position - rootPart.Position).Magnitude
-                if distance < 50 then
-                    boat = obj
-                    break
+            if obj:IsA("VehicleSeat") and (obj.Name:lower():find("boat") or obj.Parent:FindFirstChild("Boat")) then
+                local dist = (obj.Position - rootPart.Position).Magnitude
+                if dist < 50 then
+                    obj.MaxSpeed = 300
+                    notify("Boat speed: ON")
+                    return
                 end
             end
         end
-        
-        if boat then
-            boat.MaxSpeed = 300
-            boat.Torque = Vector3.new(999999, 0, 999999)
-            notify("🚤 Speed Boat: AKTIF (300)")
-        else
-            notify("❌ Tidak ada boat di dekatmu!")
-        end
+        notify("No boat nearby!")
     end)
 end
 
--- =============================================
--- 🏃 SPEED & JUMP HACK
--- =============================================
-
-local speedHack = false
+-- SPEED HACK
 local function toggleSpeed()
     speedHack = not speedHack
     if speedHack then
         humanoid.WalkSpeed = 80
-        notify("🏃 Speed Karakter: AKTIF (80)")
+        notify("Speed: ON (80)")
     else
         humanoid.WalkSpeed = 16
-        notify("🏃 Speed Karakter: MATI")
+        notify("Speed: OFF")
     end
 end
 
-local jumpHack = false
+-- JUMP HACK
 local function toggleJump()
     jumpHack = not jumpHack
     if jumpHack then
         humanoid.JumpPower = 200
-        notify("⬆ Jump Hack: AKTIF (200)")
+        notify("Jump: ON (200)")
     else
         humanoid.JumpPower = 50
-        notify("⬆ Jump Hack: MATI")
+        notify("Jump: OFF")
     end
 end
 
--- INFINITE YIELD (Anti Lag)
-game:GetService("RunService").Heartbeat:Connect(function()
-    pcall(function()
-        if speedHack then
-            humanoid.WalkSpeed = 80
-        end
-        if jumpHack then
-            humanoid.JumpPower = 200
-        end
-    end)
-end)
-
--- =============================================
--- 📱 UI UNTUK HP (Mobile)
--- =============================================
-
-local function createMobileUI()
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "XyzeDevUI"
-    screenGui.Parent = player:WaitForChild("PlayerGui")
-    
-    -- Background
-    local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0, 240, 0, 650)
-    frame.Position = UDim2.new(0, 10, 0.5, -325)
-    frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-    frame.BackgroundTransparency = 0.15
-    frame.BorderSizePixel = 0
-    frame.Parent = screenGui
-    
-    -- Scroll Frame
-    local scrollingFrame = Instance.new("ScrollingFrame")
-    scrollingFrame.Size = UDim2.new(1, -10, 1, -40)
-    scrollingFrame.Position = UDim2.new(0, 5, 0, 35)
-    scrollingFrame.BackgroundTransparency = 1
-    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 800)
-    scrollingFrame.ScrollBarThickness = 5
-    scrollingFrame.Parent = frame
-    
-    -- Title
-    local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, 0, 0, 30)
-    title.Position = UDim2.new(0, 0, 0, 5)
-    title.Text = "🐟 XyzeDev Script"
-    title.TextColor3 = Color3.fromRGB(255, 200, 50)
-    title.BackgroundTransparency = 1
-    title.Font = Enum.Font.GothamBold
-    title.TextSize = 16
-    title.Parent = frame
-    
-    -- Semua tombol
-    local allButtons = {
-        -- Fitur Memancing
-        {text = "🎣 Auto Farm", color = Color3.fromRGB(50, 200, 100), func = toggleAutoFarm},
-        {text = "🔄 Auto Reel", color = Color3.fromRGB(50, 150, 255), func = toggleAutoReel},
-        {text = "🎣 Auto Bait", color = Color3.fromRGB(200, 150, 50), func = toggleAutoBait},
-        {text = "💰 Auto Sell", color = Color3.fromRGB(0, 200, 100), func = toggleAutoSell},
-        {text = "🔧 Upgrade Rod", color = Color3.fromRGB(200, 100, 50), func = toggleAutoUpgrade},
-        {text = "🗑️ Auto Drop", color = Color3.fromRGB(150, 100, 50), func = toggleAutoDrop},
-        {text = "🔍 Fish Finder", color = Color3.fromRGB(255, 100, 200), func = fishFinder},
-        {text = "🐋 Mega Catch", color = Color3.fromRGB(255, 50, 50), func = megaCatch},
-        {text = "📊 Fish Stats", color = Color3.fromRGB(100, 200, 255), func = fishStats},
-        {text = "📡 Fish Radar", color = Color3.fromRGB(0, 255, 200), func = toggleFishRadar},
-        {text = "⚡ Auto All", color = Color3.fromRGB(255, 200, 0), func = autoFishAll},
-        -- Fitur Lain
-        {text = "🛒 Beli Rod", color = Color3.fromRGB(50, 150, 255), func = autoBuyRod},
-        {text = "📍 Teleport", color = Color3.fromRGB(255, 100, 100), func = teleportSpawn},
-        {text = "🚤 Speed Boat", color = Color3.fromRGB(100, 200, 255), func = speedBoat},
-        {text = "🏃 Speed Hack", color = Color3.fromRGB(255, 200, 50), func = toggleSpeed},
-        {text = "⬆ Jump Hack", color = Color3.fromRGB(200, 100, 255), func = toggleJump},
-        -- Info
-        {text = "💬 Discord", color = Color3.fromRGB(100, 50, 200), func = function()
-            notify("👨‍💻 Developer: XyzeDev")
-            notify("💬 Discord: https://discord.gg/xyzedev")
-            setclipboard and setclipboard("https://discord.gg/xyzedev") or nil
-        end},
-    }
-    
-    for i, btn in pairs(allButtons) do
-        local button = Instance.new("TextButton")
-        button.Size = UDim2.new(0.9, 0, 0, 35)
-        button.Position = UDim2.new(0.05, 0, 0, 5 + (i-1) * 40)
-        button.Text = btn.text
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        button.BackgroundColor3 = btn.color
-        button.BackgroundTransparency = 0.2
-        button.Font = Enum.Font.Gotham
-        button.TextSize = 14
-        button.BorderSizePixel = 0
-        button.Parent = scrollingFrame
-        
-        button.MouseButton1Click:Connect(btn.func)
-    end
-    
-    -- Tombol Tutup
-    local closeBtn = Instance.new("TextButton")
-    closeBtn.Size = UDim2.new(0, 30, 0, 30)
-    closeBtn.Position = UDim2.new(1, -35, 0, 5)
-    closeBtn.Text = "✕"
-    closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-    closeBtn.Font = Enum.Font.GothamBold
-    closeBtn.TextSize = 16
-    closeBtn.BorderSizePixel = 0
-    closeBtn.Parent = frame
-    
-    closeBtn.MouseButton1Click:Connect(function()
-        frame.Visible = not frame.Visible
-    end)
-    
-    notify("📱 UI Mobile telah dimuat! (Klik ✕ untuk sembunyikan)")
-end
-
--- =============================================
--- 🎮 KEYBOARD SHORTCUT (UNTUK PC)
--- =============================================
-
-game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    
-    local key = input.KeyCode
-    
-    -- Fitur Memancing
-    if key == Enum.KeyCode.F then toggleAutoFarm()
-    elseif key == Enum.KeyCode.L then toggleAutoReel()
-    elseif key == Enum.KeyCode.K then toggleAutoBait()
-    elseif key == Enum.KeyCode.J then toggleAutoSell()
-    elseif key == Enum.KeyCode.N then toggleAutoUpgrade()
-    elseif key == Enum.KeyCode.U then toggleAutoDrop()
-    elseif key == Enum.KeyCode.M then fishFinder()
-    elseif key == Enum.KeyCode.O then megaCatch()
-    elseif key == Enum.KeyCode.P then fishStats()
-    elseif key == Enum.KeyCode.I then toggleFishRadar()
-    elseif key == Enum.KeyCode.Y then autoFishAll()
-    
-    -- Fitur Lain
-    elseif key == Enum.KeyCode.B then autoBuyRod()
-    elseif key == Enum.KeyCode.T then teleportSpawn()
-    elseif key == Enum.KeyCode.V then speedBoat()
-    elseif key == Enum.KeyCode.X then toggleSpeed()
-    elseif key == Enum.KeyCode.Z then toggleJump()
-    elseif key == Enum.KeyCode.H then
-        notify("👨‍💻 Developer: XyzeDev")
-        notify("💬 Discord: https://discord.gg/xyzedev")
-    end
-end)
-
--- =============================================
--- 🚫 ANTI AFK (UNIVERSAL)
--- =============================================
-
+-- ANTI AFK
 game:GetService("Players").LocalPlayer.Idled:Connect(function()
     pcall(function()
         local vu = game:GetService("VirtualUser")
@@ -584,41 +343,119 @@ game:GetService("Players").LocalPlayer.Idled:Connect(function()
     end)
 end)
 
--- =============================================
--- 🚀 STARTUP
--- =============================================
+-- KEYBOARD SHORTCUTS
+game:GetService("UserInputService").InputBegan:Connect(function(input, gp)
+    if gp then return end
+    local k = input.KeyCode
+    if k == Enum.KeyCode.F then toggleFarm()
+    elseif k == Enum.KeyCode.L then toggleReel()
+    elseif k == Enum.KeyCode.K then toggleBait()
+    elseif k == Enum.KeyCode.J then toggleSell()
+    elseif k == Enum.KeyCode.N then toggleUpgrade()
+    elseif k == Enum.KeyCode.U then toggleDrop()
+    elseif k == Enum.KeyCode.M then fishFinder()
+    elseif k == Enum.KeyCode.O then megaCatch()
+    elseif k == Enum.KeyCode.P then fishStats()
+    elseif k == Enum.KeyCode.I then toggleRadar()
+    elseif k == Enum.KeyCode.Y then autoAll()
+    elseif k == Enum.KeyCode.B then buyRod()
+    elseif k == Enum.KeyCode.T then teleport()
+    elseif k == Enum.KeyCode.V then boatSpeed()
+    elseif k == Enum.KeyCode.X then toggleSpeed()
+    elseif k == Enum.KeyCode.Z then toggleJump()
+    elseif k == Enum.KeyCode.H then
+        notify("Developer: XyzeDev")
+        notify("Discord: https://discord.gg/xyzedev")
+    end
+end)
 
-wait(1)
-notify("✅ Script Lengkap Siap!")
-notify("📱 HP: Gunakan UI di layar")
-notify("💻 PC: Lihat daftar hotkey di bawah")
-
--- Buat UI untuk HP
+-- MOBILE UI
 if isMobile then
-    wait(0.5)
-    createMobileUI()
+    spawn(function()
+        wait(1)
+        local sg = Instance.new("ScreenGui")
+        sg.Name = "XyzeUI"
+        sg.Parent = player:WaitForChild("PlayerGui")
+        
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(0, 200, 0, 500)
+        frame.Position = UDim2.new(0, 10, 0.5, -250)
+        frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        frame.BackgroundTransparency = 0.2
+        frame.BorderSizePixel = 0
+        frame.Parent = sg
+        
+        local sf = Instance.new("ScrollingFrame")
+        sf.Size = UDim2.new(1, -10, 1, -40)
+        sf.Position = UDim2.new(0, 5, 0, 35)
+        sf.BackgroundTransparency = 1
+        sf.CanvasSize = UDim2.new(0, 0, 0, 700)
+        sf.ScrollBarThickness = 5
+        sf.Parent = frame
+        
+        local title = Instance.new("TextLabel")
+        title.Size = UDim2.new(1, 0, 0, 30)
+        title.Position = UDim2.new(0, 0, 0, 5)
+        title.Text = "XyzeDev Script"
+        title.TextColor3 = Color3.fromRGB(255, 200, 50)
+        title.BackgroundTransparency = 1
+        title.Font = Enum.Font.GothamBold
+        title.TextSize = 16
+        title.Parent = frame
+        
+        local btns = {
+            {"Farm", toggleFarm}, {"Reel", toggleReel}, {"Bait", toggleBait},
+            {"Sell", toggleSell}, {"Upgrade", toggleUpgrade}, {"Drop", toggleDrop},
+            {"Finder", fishFinder}, {"Mega", megaCatch}, {"Stats", fishStats},
+            {"Radar", toggleRadar}, {"All", autoAll}, {"Buy Rod", buyRod},
+            {"Teleport", teleport}, {"Boat", boatSpeed}, {"Speed", toggleSpeed},
+            {"Jump", toggleJump}, {"Info", function()
+                notify("Developer: XyzeDev")
+                notify("Discord: https://discord.gg/xyzedev")
+            end}
+        }
+        
+        for i, btn in pairs(btns) do
+            local b = Instance.new("TextButton")
+            b.Size = UDim2.new(0.9, 0, 0, 30)
+            b.Position = UDim2.new(0.05, 0, 0, 5 + (i-1) * 35)
+            b.Text = btn[1]
+            b.TextColor3 = Color3.fromRGB(255, 255, 255)
+            b.BackgroundColor3 = Color3.fromRGB(50, 150, 255)
+            b.BackgroundTransparency = 0.3
+            b.Font = Enum.Font.Gotham
+            b.TextSize = 13
+            b.BorderSizePixel = 0
+            b.Parent = sf
+            b.MouseButton1Click:Connect(btn[2])
+        end
+        
+        local close = Instance.new("TextButton")
+        close.Size = UDim2.new(0, 30, 0, 30)
+        close.Position = UDim2.new(1, -35, 0, 5)
+        close.Text = "X"
+        close.TextColor3 = Color3.fromRGB(255, 255, 255)
+        close.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+        close.Font = Enum.Font.GothamBold
+        close.TextSize = 16
+        close.BorderSizePixel = 0
+        close.Parent = frame
+        close.MouseButton1Click:Connect(function()
+            frame.Visible = not frame.Visible
+        end)
+    end)
 end
 
--- =============================================
--- 📋 DAFTAR HOTKEY (PC)
--- =============================================
+-- STARTUP
+wait(1)
+notify("Script Loaded!")
+notify("F=Farm L=Reel K=Bait J=Sell")
+notify("N=Upgrade U=Drop M=Finder O=Mega")
+notify("P=Stats I=Radar Y=All B=Buy Rod")
+notify("T=Teleport V=Boat X=Speed Z=Jump H=Info")
 
 print("=========================================")
-print("🐟 FISH & MONSTERS - SCRIPT LENGKAP")
-print("=========================================")
-print("🎣 FITUR MEMANCING:")
-print("   [F] Auto Farm    [L] Auto Reel")
-print("   [K] Auto Bait    [J] Auto Sell")
-print("   [N] Upgrade Rod  [U] Auto Drop")
-print("   [M] Fish Finder  [O] Mega Catch")
-print("   [P] Fish Stats   [I] Fish Radar")
-print("   [Y] Auto All")
-print("")
-print("🛒 FITUR LAIN:")
-print("   [B] Beli Rod     [T] Teleport")
-print("   [V] Speed Boat   [X] Speed Hack")
-print("   [Z] Jump Hack    [H] Info")
-print("=========================================")
-print("👨‍💻 Developer: XyzeDev")
-print("💬 Discord: https://discord.gg/xyzedev")
+print("FISH AND MONSTERS SCRIPT")
+print("Developer: XyzeDev")
+print("Discord: https://discord.gg/xyzedev")
 print("=========================================")
